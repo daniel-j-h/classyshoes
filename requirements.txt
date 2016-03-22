@@ -1,0 +1,4 @@
+requests
+progress
+sqlalchemy
+gensim

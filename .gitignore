@@ -1,0 +1,5 @@
+*.py[cod]
+.env
+
+storage.*
+model.*
