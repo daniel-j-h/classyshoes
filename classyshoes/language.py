@@ -16,7 +16,7 @@ def mkTokenizer(language):
 
 # Language dependant stopper, access to stop words
 def mkStopper(language):
-    return set(stopwords.words(language))
+    return lambda word: word in set(stopwords.words(language))
 
 
 # Language name needed for the NLTK datasets based on locale

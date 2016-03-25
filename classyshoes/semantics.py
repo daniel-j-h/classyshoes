@@ -13,7 +13,7 @@ from classyshoes.language import mkStemmer, mkTokenizer, mkStopper
 # Pre-process text for training and querying
 def mkCanonical(text, stemmer, tokenizer, stopper):
     tokens = [stemmer(token).lower() for token in tokenizer(text) if token not in punctuation]
-    return [word for word in tokens if word not in stopper]
+    return [word for word in tokens if not stopper(word)]
 
 
 # Pre-processes a review and attaches labels to it
