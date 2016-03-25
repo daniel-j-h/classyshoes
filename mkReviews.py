@@ -8,6 +8,7 @@ from classyshoes.db import mkEngine, mkStorage, mkScopedSession, Review
 from classyshoes.api import mkKeepAliveSession, mkEndpoint, mkIterable
 from classyshoes.args import mkArguments
 from classyshoes.headers import mkBaseHeaders
+from classyshoes.language import mkLanguage
 from classyshoes.progress import mkProgress, mkNullProgress
 from classyshoes.semantics import mkModel, mkLabeledReviews
 
@@ -24,7 +25,7 @@ def main():
         mkStorage(engine)
         mkDatabase(engine, args)
 
-    mkSemantics(engine, args.model)
+    mkSemantics(engine, args.model, mkLanguage(args.language))
 
 
 def mkDatabase(engine, args):
@@ -43,17 +44,19 @@ def mkDatabase(engine, args):
             sqlSession.add(sqlReview)
 
 
-def mkSemantics(engine, path):
+def mkSemantics(engine, path, language):
     progress = mkProgress('Epoch')
 
     with mkScopedSession(engine) as sqlSession:
         # Force generator; keep in memory as we have to walk over corpus multiple times
-        reviews = list(mkLabeledReviews(sqlSession))
+        reviews = list(mkLabeledReviews(sqlSession, language))
 
         model = mkModel(reviews, path, progress)
         
-        print(model)
+        # Drop user into interactive session
         import code
+        from classyshoes.utils import mkQ
+        Q = mkQ(language)
         code.interact(local=locals())
 
 

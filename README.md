@@ -5,19 +5,31 @@ Learning semantical representations using a distributed representation of docume
 
 ## Usage
 
+    # Virtualenv with Python3
+    pyvenv --system-site-packages .env
+    . .env/bin/activate
+
+    # Install dependencies into env
+    pip install -r requirements.txt
+
+    # Download NLTK data needed for language pre-processing
+    python -m nltk.downloader snowball_data stopwords punkt
+
+    # Fetch reviews and train model
     ./mkReviews.py
 
 Note: no command line arguments imply querying the german Zalando API; see `./mkReviews.py --help`.
 
 When done, we currently drop you into a interactive console with the trained model at hand.
+The function `Q` canonicalizes your query by tokenizing, stemming and removing punctuation.
 
-    >>> model.doesnt_match('sneaker stiefel hemd'.split())
+    >>> model.doesnt_match(Q('sneaker stiefel hemd'))
     hemd
 
-    >>> model.most_similar(['stiefel', 'kalt'], ['warm'], topn=3)
+    >>> model.most_similar(Q('stiefel kalt'), Q('warm'), topn=3)
     [('schuh', 0.4282079041004181), ('blazer', 0.4223514497280121), ('sneaker', 0.4199856221675873)]
 
-    >>> model.similarity('kleid', 'hemd')
+    >>> model.similarity(Q('kleid'), Q('hemd'))
     0.8267573236460305
 
 The same works on document vectors.
@@ -26,8 +38,7 @@ The same works on document vectors.
     0.33098285641485276
 
 
-Note: do not take the results too seriously at this time.
-There is the need for experimentation and fine-tuning: from proper tokenization to parameters for the model.
+Note: do not take the results too seriously at this time. There is the need for experimentation and fine-tuning.
 
 
 ## What it does

@@ -2,3 +2,4 @@ requests
 progress
 sqlalchemy
 gensim
+nltk
