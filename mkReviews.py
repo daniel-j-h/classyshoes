@@ -2,7 +2,7 @@
 
 from os.path import isfile
 from sys import exit
-from logging import basicConfig
+from logging import basicConfig, INFO
 
 from classyshoes.db import mkEngine, mkStorage, mkScopedSession, Review
 from classyshoes.api import mkKeepAliveSession, mkEndpoint, mkIterable
@@ -19,7 +19,7 @@ def main():
     language = mkLanguage(args.locale)
 
     if args.verbose:
-        basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+        basicConfig(format='%(levelname)s: %(message)s', level=INFO)
 
     engine = mkEngine(args.storage)
 
