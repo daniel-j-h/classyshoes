@@ -23,14 +23,8 @@ def mkTaggedDocument(review, stemmer, tokenizer, stopper):
     title = mkCanonical(review.title, stemmer, tokenizer, stopper)
     description = mkCanonical(review.description, stemmer, tokenizer, stopper)
 
-    # Generate tags carrying semantic based on review attributes
-    rating = 'RATING_GOOD' if review.rating > 3 else 'RATING_BAD'
-    recommend = 'RECOMMEND_GOOD' if review.recommend else 'RECOMMEND_BAD'
-    helpful = 'HELPFUL_GOOD' if review.helpfulCount > review.unhelpfulCount else 'HELPFUL_BAD'
-
     words = title + description
-    # TODO(daniel-j-h): experiment with additional tags; first try was not that promising
-    tags = [articleId] #, rating, recommend, helpful]
+    tags = [articleId]
 
     return TaggedDocument(words, tags)
 
@@ -47,7 +41,8 @@ def mkLabeledReviews(session, language):
 
 # Trains a distributed representation of documents model showing the progress
 def mkTrainedModel(documents, progress, epochs=10):
-    model = Doc2Vec(size=100, window=10, min_count=1, workers=cpu_count(), alpha=0.025, min_alpha=0.025)
+    model = Doc2Vec(size=300, window=10, min_count=1, sample=1e-5, workers=cpu_count(), alpha=0.025, min_alpha=0.025)
+
     model.build_vocab(documents)
 
     rate = 0.002
@@ -59,8 +54,6 @@ def mkTrainedModel(documents, progress, epochs=10):
 
         model.alpha -= rate
         model.min_alpha = model.alpha
-
-    model.init_sims(replace=True)
 
     return model
 
