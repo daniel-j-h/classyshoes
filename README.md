@@ -1,6 +1,6 @@
 ### Classy Shoes!
 
-Learning semantical representations using a distributed representation of documents.
+Learning semantical representations using a Distributed Memory Model of Paragraph Vectors (PV-DM)
 
 
 ## Usage
@@ -15,37 +15,19 @@ Learning semantical representations using a distributed representation of docume
     # Download NLTK data needed for language pre-processing
     python -m nltk.downloader snowball_data stopwords punkt
 
-    # Fetch reviews and train model
+    # Fetch reviews, train model, start Httpd
     ./mkReviews.py
 
-Note: no command line arguments imply querying the german Zalando API; see `./mkReviews.py --help`.
+No command line arguments imply querying the german Zalando API; see `./mkReviews.py --help`.
 
-When done, we currently drop you into a interactive console with the trained model at hand.
-The function `Q` canonicalizes your query by tokenizing, stemming and removing punctuation.
-
-    >>> model.doesnt_match(Q('sneaker stiefel hemd'))
-    hemd
-
-    >>> model.most_similar(Q('stiefel kalt'), Q('warm'), topn=3)
-    [('schuh', 0.4282079041004181), ('blazer', 0.4223514497280121), ('sneaker', 0.4199856221675873)]
-
-    >>> model.similarity(Q('kleid'), Q('hemd'))
-    0.8267573236460305
-
-The same works on document vectors.
-
-    >>> model.docvecs.similarity('M0822D06Q-K11', 'SE652K000-M11')
-    0.33098285641485276
-
-
-Note: do not take the results too seriously at this time. There is the need for experimentation and fine-tuning.
+Do not take the results too seriously at this time. There is the need for experimentation and fine-tuning.
 
 
 ## What it does
 
 We first fetch all article reviews from the Zalando API.
 We then transparently cache reviews and their attributes locally in a SQLite3 database.
-As soon as we saved the reviews locally, we train a distributed representation of documents model on reviews and their attributes, learning semantic meaning from their relationships.
+As soon as we saved the reviews locally, we train a Distributed Memory Model of Paragraph Vectors (PV-DM) on reviews and their attributes, learning semantic meaning from their relationships.
 Transparently caching the trained model allows us to skip this step in subsequent runs.
 
 

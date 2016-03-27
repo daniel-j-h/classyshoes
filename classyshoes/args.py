@@ -6,7 +6,7 @@ def mkArguments(description):
     parser = ArgumentParser(description=description,
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--shopURL', default='https://api.zalando.com', help='shop API URL')
-    parser.add_argument('--language', default='de-DE', help='language and country for shop')
+    parser.add_argument('--locale', default='de-DE', help='locale for shop to use')
     parser.add_argument('--whoami', default='ClassyShoes', help='client name to send')
     parser.add_argument('--timeout', default=0.1, help='timeout between subsequent requests')
     parser.add_argument('--verbose', action='store_true', help='be more verbose with logging')

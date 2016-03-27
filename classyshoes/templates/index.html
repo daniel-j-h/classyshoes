@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Distributed Memory Model of Paragraph Vectors (PV-DM) for Article Reviews</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+  </head>
+  <body>
+    <form id="query-form" method="post">
+      <label for="query-positive">Positive</label>
+      <input type="text" name="query-positive" id="query-positive" autofocus />
+
+      <label for="query-negative">Negative</label>
+      <input type="text" name="query-negative" id="query-negative" />
+
+      <input type="submit" value="Go" />
+    </form>
+
+    {% if matches or articles %}
+    <p>Results for Canonicalized Query: (+) {{ positiveQuery }}, (-) {{negativeQuery }}</p>
+    {% endif %}
+
+    {% if matches %}
+    <table>
+      <thead>
+        <tr>
+          <th>Canonicalized Word</th>
+          <th>Cosine Similarity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for match in matches %}
+        <tr>
+          <td>{{ match[0] }}</td>
+	  <td>{{ '{0:.3f}'.format(match[1]) }}</td>
+        </tr>
+	{% endfor %}
+      </tbody>
+    </table>
+    <table>
+    {% endif %}
+
+    {% if articles %}
+    <table>
+      <thead>
+        <tr>
+          <th>ArticleId</th>
+          <th>Cosine Similarity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in articles %}
+        <tr>
+          <td>{{ article[0] }}</td>
+	  <td>{{ '{0:.3f}'.format(article[1]) }}</td>
+        </tr>
+	{% endfor %}
+      </tbody>
+    </table>
+    <table>
+    {% endif %}
+
+  </body>
+<html>

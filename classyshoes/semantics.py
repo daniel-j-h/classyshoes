@@ -40,7 +40,7 @@ def mkLabeledReviews(session, language):
 
 
 # Trains a distributed representation of documents model showing the progress
-def mkTrainedModel(documents, progress, epochs=10):
+def mkTrainedModel(documents, path, progress, epochs=10):
     model = Doc2Vec(size=300, window=10, min_count=1, sample=1e-5, workers=cpu_count(), alpha=0.025, min_alpha=0.025)
 
     model.build_vocab(documents)
@@ -55,15 +55,11 @@ def mkTrainedModel(documents, progress, epochs=10):
         model.alpha -= rate
         model.min_alpha = model.alpha
 
-    return model
-
-
-# Semantics based on labeled text corpus; transparently caches trained model
-def mkModel(documents, path, progress):
-    if isfile(path):
-        model = Doc2Vec.load(path)
-    else:
-        model = mkTrainedModel(documents, progress)
-        model.save(path, pickle_protocol=3)
+    model.save(path, pickle_protocol=3)
 
     return model
+
+
+# Loads an existing model from disk
+def mkExistingTrainedModel(path):
+    return Doc2Vec.load(path)

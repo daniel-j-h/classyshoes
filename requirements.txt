@@ -3,3 +3,4 @@ progress
 sqlalchemy
 gensim
 nltk
+flask

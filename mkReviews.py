@@ -7,14 +7,16 @@ from logging import basicConfig
 from classyshoes.db import mkEngine, mkStorage, mkScopedSession, Review
 from classyshoes.api import mkKeepAliveSession, mkEndpoint, mkIterable
 from classyshoes.args import mkArguments
+from classyshoes.httpd import mkHttpd
 from classyshoes.headers import mkBaseHeaders
 from classyshoes.language import mkLanguage
 from classyshoes.progress import mkProgress, mkNullProgress
-from classyshoes.semantics import mkModel, mkLabeledReviews
+from classyshoes.semantics import mkTrainedModel, mkExistingTrainedModel, mkLabeledReviews
 
 
 def main():
     args = mkArguments('Learns review semantics based on article reviews')
+    language = mkLanguage(args.locale)
 
     if args.verbose:
         basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -25,11 +27,17 @@ def main():
         mkStorage(engine)
         mkDatabase(engine, args)
 
-    mkSemantics(engine, args.model, mkLanguage(args.language))
+    if not isfile(args.model):
+        model = mkSemanticModel(engine, args.model, language)
+    else:
+        model = mkExistingTrainedModel(args.model)
+
+    httpd = mkHttpd(model, language)
+    httpd.run(debug=True)
 
 
 def mkDatabase(engine, args):
-    headers = mkBaseHeaders(args.language, 'gzip', args.whoami)
+    headers = mkBaseHeaders(args.locale, 'gzip', args.whoami)
     progress = mkProgress('Page')
 
     with mkKeepAliveSession() as httpSession, mkScopedSession(engine) as sqlSession:
@@ -44,20 +52,15 @@ def mkDatabase(engine, args):
             sqlSession.add(sqlReview)
 
 
-def mkSemantics(engine, path, language):
+def mkSemanticModel(engine, path, language):
     progress = mkProgress('Epoch')
 
     with mkScopedSession(engine) as sqlSession:
         # Force generator; keep in memory as we have to walk over corpus multiple times
         reviews = list(mkLabeledReviews(sqlSession, language))
+        model = mkTrainedModel(reviews, path, progress)
 
-        model = mkModel(reviews, path, progress)
-        
-        # Drop user into interactive session
-        import code
-        from classyshoes.utils import mkQ
-        Q = mkQ(language)
-        code.interact(local=locals())
+    return model
 
 
 if __name__ == '__main__':

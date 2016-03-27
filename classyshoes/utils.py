@@ -3,7 +3,7 @@ from classyshoes.semantics import mkCanonical
 
 
 # Pre-process text to make it queryable; convinience helper
-def mkQ(language):
+def mkQueryable(language):
     stemmer = mkStemmer(language)
     tokenizer = mkTokenizer(language)
     stopper = mkStopper(language)
