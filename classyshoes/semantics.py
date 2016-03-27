@@ -41,19 +41,23 @@ def mkLabeledReviews(session, language):
 
 # Trains a distributed representation of documents model showing the progress
 def mkTrainedModel(documents, path, progress, epochs=10):
-    model = Doc2Vec(size=300, window=10, min_count=1, sample=1e-5, workers=cpu_count(), alpha=0.025, min_alpha=0.025)
+    alpha = 0.025
+    alpha_min = 0.001
+    alpha_delta = (alpha - alpha_min) / epochs
+
+    model = Doc2Vec(size=300, window=5, min_count=1, sample=1e-5, workers=cpu_count())
 
     model.build_vocab(documents)
-
-    rate = 0.002
 
     for epoch in progress(range(epochs)):
         shuffle(documents)
 
+        model.alpha = alpha
+        model.min_alpha = alpha
+
         model.train(documents)
 
-        model.alpha -= rate
-        model.min_alpha = model.alpha
+        alpha -= alpha_delta
 
     model.save(path, pickle_protocol=3)
 
