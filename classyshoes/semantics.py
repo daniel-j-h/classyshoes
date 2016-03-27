@@ -60,6 +60,8 @@ def mkTrainedModel(documents, progress, epochs=10):
         model.alpha -= rate
         model.min_alpha = model.alpha
 
+    model.init_sims(replace=True)
+
     return model
 
 
