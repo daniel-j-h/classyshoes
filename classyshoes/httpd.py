@@ -16,12 +16,15 @@ def mkIndex(model, queryable):
             if not positiveQuery and not negativeQuery:
                 return render_template('index.html')
 
-            matches = model.most_similar(positiveQuery, negativeQuery, topn=10)
+            try:
+                matches = model.most_similar(positiveQuery, negativeQuery, topn=10)
 
-            positiveDocVec = model.infer_vector(positiveQuery)
-            negativeDocVec = model.infer_vector(negativeQuery)
+                positiveDocVec = model.infer_vector(positiveQuery)
+                negativeDocVec = model.infer_vector(negativeQuery)
 
-            articles = model.docvecs.most_similar([positiveDocVec], [negativeDocVec], topn=10)
+                articles = model.docvecs.most_similar([positiveDocVec], [negativeDocVec], topn=10)
+            except KeyError:
+                pass
 
         return render_template('index.html', **locals())
 
